@@ -1,0 +1,21 @@
+
+# Local database configuration files
+/Config/database.php
+/Config/mongodb.php
+
+# Environment files containing private settings
+.env
+.env.*
+!.env.example
+
+# Installed PHP dependencies
+/vendor/
+
+# Temporary files and logs
+*.log
+*.tmp
+
+# Editor and operating system files
+.vscode/
+.DS_Store
+Thumbs.db
