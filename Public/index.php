@@ -19,10 +19,13 @@ require_once __DIR__ . '/../Config/database.php';
 require_once __DIR__ . '/../Config/mongodb.php';
 
 
-// STEP 1: Retrieve Shadow Realm's metadata from MongoDB.
-$query = new MongoDB\Driver\Query(
-    ["game_id" => 401]
-);
+// // STEP 1(test ): Retrieve Shadow Realm's metadata from MongoDB.
+// $query = new MongoDB\Driver\Query(
+//     ["game_id" => 401]
+// );
+
+// STEP 1: Retrieve metadata for all games from MongoDB.
+$query = new MongoDB\Driver\Query([]);
 
 $results = $mongoManager->executeQuery(
     "steam_content_db.game metadata",
