@@ -52,9 +52,36 @@ $stmt = $pdo->query($sql);
 
 $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+ // Find all game IDs that have a cover stored in GridFS.
+$client = new MongoDB\Client("mongodb://127.0.0.1:27017");
+
+$coverFiles = $client
+    ->selectDatabase("steam_content_db")
+    ->selectCollection("game_covers.files");
+
+$coverGameIds = array_map(
+    'intval',
+    $coverFiles->distinct("metadata.game_id")
+);
 
 // STEP 4: Display MariaDB information and matching MongoDB metadata.
 foreach ($games as $game) {
+
+    // Get the current game's ID from MariaDB.
+    $gameId = (int) $game['game_id'];
+
+
+ // Show an image only when GridFS contains a cover for this game.
+if (in_array($gameId, $coverGameIds, true)) {
+
+    echo '<img
+        src="cover.php?game_id=' . $gameId . '"
+        alt="' . htmlspecialchars($game['game_name'], ENT_QUOTES, 'UTF-8') . ' cover"
+        style="width: 180px; height: auto; border-radius: 8px;"
+    >';
+}
+
+
 
     $gameId = (int)$game['game_id'];
 
