@@ -1,0 +1,192 @@
+[
+  {
+    "game_id": 401,
+    "genre": "RPG",
+    "tags": [
+      "RPG",
+      "Adventure"
+    ]
+  },
+  {
+    "game_id": 402,
+    "genre": "Action",
+    "tags": [
+      "Action",
+      "Sci-Fi"
+    ]
+  },
+  {
+    "game_id": 403,
+    "genre": "Racing",
+    "tags": [
+      "Racing",
+      "Simulation"
+    ]
+  },
+  {
+    "game_id": 404,
+    "genre": "Horror",
+    "tags": [
+      "Horror"
+    ]
+  },
+  {
+    "game_id": 405,
+    "genre": "Adventure",
+    "tags": [
+      "Adventure",
+      "Sci-Fi"
+    ]
+  },
+  {
+    "game_id": 406,
+    "genre": "Action",
+    "tags": [
+      "Action"
+    ]
+  },
+  {
+    "game_id": 407,
+    "genre": "RPG",
+    "tags": [
+      "RPG",
+      "Adventure"
+    ]
+  },
+  {
+    "game_id": 408,
+    "genre": "Simulation",
+    "tags": [
+      "Simulation",
+      "Strategy"
+    ]
+  },
+  {
+    "game_id": 409,
+    "genre": "Adventure",
+    "tags": [
+      "Adventure"
+    ]
+  },
+  {
+    "game_id": 410,
+    "genre": "Simulation",
+    "tags": [
+      "Simulation"
+    ]
+  },
+  {
+    "game_id": 411,
+    "genre": "Adventure",
+    "tags": [
+      "Adventure"
+    ]
+  },
+  {
+    "game_id": 412,
+    "genre": "Action",
+    "tags": [
+      "Action",
+      "Sci-Fi"
+    ]
+  },
+  {
+    "game_id": 413,
+    "genre": "Strategy",
+    "tags": [
+      "Strategy"
+    ]
+  },
+  {
+    "game_id": 414,
+    "genre": "Adventure",
+    "tags": [
+      "Adventure"
+    ]
+  },
+  {
+    "game_id": 415,
+    "genre": "Simulation",
+    "tags": [
+      "Simulation"
+    ]
+  },
+  {
+    "game_id": 416,
+    "genre": "Action",
+    "tags": [
+      "Action",
+      "Sci-Fi"
+    ]
+  },
+  {
+    "game_id": 417,
+    "genre": "Strategy",
+    "tags": [
+      "Strategy"
+    ]
+  },
+  {
+    "game_id": 418,
+    "genre": "Racing",
+    "tags": [
+      "Racing",
+      "Action"
+    ]
+  },
+  {
+    "game_id": 419,
+    "genre": "Horror",
+    "tags": [
+      "Horror",
+      "Adventure"
+    ]
+  },
+  {
+    "game_id": 420,
+    "genre": "Simulation",
+    "tags": [
+      "Simulation",
+      "Strategy"
+    ]
+  },
+  {
+    "game_id": 421,
+    "genre": "Action",
+    "tags": [
+      "Action",
+      "Adventure"
+    ]
+  },
+  {
+    "game_id": 422,
+    "genre": "Adventure",
+    "tags": [
+      "Adventure"
+    ]
+  },
+  {
+    "game_id": 423,
+    "genre": "Simulation",
+    "tags": [
+      "Simulation"
+    ]
+  },
+  {
+    "game_id": 424,
+    "genre": "RPG",
+    "tags": [
+      "RPG",
+      "Sci-Fi"
+    ]
+  },
+  {
+    "game_id": 425,
+    "genre": "RPG",
+    "tags": [
+      "RPG",
+      "Action",
+      "Adventure"
+    ]
+  }
+]
