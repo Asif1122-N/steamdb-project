@@ -19,11 +19,6 @@ require_once __DIR__ . '/../Config/database.php';
 require_once __DIR__ . '/../Config/mongodb.php';
 
 
-// // STEP 1(test ): Retrieve Shadow Realm's metadata from MongoDB.
-// $query = new MongoDB\Driver\Query(
-//     ["game_id" => 401]
-// );
-
 // STEP 1: Retrieve metadata for all games from MongoDB.
 $query = new MongoDB\Driver\Query([]);
 
@@ -38,7 +33,7 @@ $metadataByGameId = [];
 
 foreach ($results as $document) {
 
-    $metadataByGameId[(int)$document->game_id] = $document;
+    $metadataByGameId[(int) $document->game_id] = $document;
 
 }
 
@@ -52,7 +47,8 @@ $stmt = $pdo->query($sql);
 
 $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
- // Find all game IDs that have a cover stored in GridFS.
+
+// STEP 4: Find all game IDs with covers in MongoDB GridFS.
 $client = new MongoDB\Client("mongodb://127.0.0.1:27017");
 
 $coverFiles = $client
@@ -64,52 +60,88 @@ $coverGameIds = array_map(
     $coverFiles->distinct("metadata.game_id")
 );
 
-// STEP 4: Display MariaDB information and matching MongoDB metadata.
+
+// STEP 5: Display games with clickable covers and names.
 foreach ($games as $game) {
 
     // Get the current game's ID from MariaDB.
     $gameId = (int) $game['game_id'];
 
+    $gameName = htmlspecialchars(
+        $game['game_name'],
+        ENT_QUOTES,
+        'UTF-8'
+    );
 
- // Show an image only when GridFS contains a cover for this game.
-if (in_array($gameId, $coverGameIds, true)) {
-
-    echo '<img
-        src="cover.php?game_id=' . $gameId . '"
-        alt="' . htmlspecialchars($game['game_name'], ENT_QUOTES, 'UTF-8') . ' cover"
-        style="width: 180px; height: auto; border-radius: 8px;"
-    >';
-}
+    // The individual game details page for this game.
+    $gameUrl = "game.php?game_id=" . $gameId;
 
 
+    // CHANGE 1: Make the game cover image clickable.
+    if (in_array($gameId, $coverGameIds, true)) {
 
-    $gameId = (int)$game['game_id'];
+        echo '<a href="' . $gameUrl . '">
+            <img
+                src="cover.php?game_id=' . $gameId . '"
+                alt="' . $gameName . ' cover"
+                style="width: 180px;
+                       height: auto;
+                       border-radius: 8px;"
+            >
+        </a>';
+    }
 
-    echo "<h2>" . htmlspecialchars($game['game_name']) . "</h2>";
 
-    echo "<p>" . htmlspecialchars($game['description'] ?? '') . "</p>";
+    // CHANGE 2: Make the game name clickable.
+    echo '<h2>
+        <a href="' . $gameUrl . '">'
+            . $gameName .
+        '</a>
+    </h2>';
 
 
-    // Add MongoDB metadata only when the game has a matching document.
+    // Display the game's description from MariaDB.
+    echo "<p>"
+        . htmlspecialchars(
+            $game['description'] ?? '',
+            ENT_QUOTES,
+            'UTF-8'
+        )
+        . "</p>";
+
+
+    // STEP 6: Display matching MongoDB metadata.
     if (isset($metadataByGameId[$gameId])) {
 
         $metadata = $metadataByGameId[$gameId];
 
         echo "<p><strong>Genre:</strong> "
-            . htmlspecialchars((string)$metadata->genre)
+            . htmlspecialchars(
+                (string) ($metadata->genre ?? ''),
+                ENT_QUOTES,
+                'UTF-8'
+            )
             . "</p>";
 
-        // Convert the MongoDB tags array into displayable text.
+        // Convert MongoDB tags into displayable text.
         $tags = [];
 
-        foreach ($metadata->tags as $tag) {
-            $tags[] = htmlspecialchars((string)$tag);
+        foreach ($metadata->tags ?? [] as $tag) {
+
+            $tags[] = htmlspecialchars(
+                (string) $tag,
+                ENT_QUOTES,
+                'UTF-8'
+            );
         }
 
         echo "<p><strong>Tags:</strong> "
             . implode(", ", $tags)
             . "</p>";
     }
+
+    // Add spacing between game records.
+    echo "<hr>";
 }
 
 ?>

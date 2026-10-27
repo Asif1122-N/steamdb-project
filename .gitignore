@@ -19,3 +19,5 @@
 .vscode/
 .DS_Store
 Thumbs.db
+# Exclude private administrator setup script
+/scripts/create_admin.php
