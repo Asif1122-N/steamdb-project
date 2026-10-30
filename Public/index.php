@@ -1,4 +1,6 @@
-
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +11,26 @@
 
 <body>
 
-<h1>Welcome to SteamDB</h1>
+<h1> SteamDB</h1>
+
+<?php if (isset($_SESSION['user_id'])): ?>
+
+    <div style="text-align: right;">
+        <button
+            type="button"
+            onclick="window.location.href='profile.php'">
+
+            Hi, <?= htmlspecialchars(
+                $_SESSION['username'],
+                ENT_QUOTES,
+                'UTF-8'
+            ) ?>
+
+        </button>
+    </div>
+
+<?php endif; ?>
+
 <p>Explore our games!</p>
 
 <?php

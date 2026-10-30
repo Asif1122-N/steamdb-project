@@ -121,17 +121,16 @@ if ($search !== '') {
 
         <h1>SteamDB</h1>
 
-        <!-- User account and library page will be added later. -->
-        <button type="button"
-                onclick="alert('User account and game library coming soon.')">
+        
+<!-- Open the logged-in user's personal profile. -->
+<button
+    type="button"
+    onclick="window.location.href='profile.php'">
 
-            Hi, <?= htmlspecialchars(
-                $username,
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>
+    Hi, <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?>
 
-        </button>
+</button>
+
 
     </header>
 
@@ -197,15 +196,17 @@ if ($search !== '') {
 
         </button>
 
-        <!-- Discount Games: functionality comes later. -->
-        <button
-            class="card"
-            type="button"
-            onclick="alert('Discount Games page coming soon.')">
+        
+<!-- Open the dynamic Discount Games page. -->
+<button
+    class="card"
+    type="button"
+    onclick="window.location.href='discount_games.php'">
 
-            Discount Games
+    Discount Games
 
-        </button>
+</button>
+
 
         <!-- Weekly Best: selected by admin later. -->
         <button

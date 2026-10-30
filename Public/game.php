@@ -189,20 +189,19 @@ function e($value) {
                 <?= number_format((float) $price['current_price'], 2) ?>
             </p>
 
-            <?php if ((float) $price['discount_percent'] > 0): ?>
+            
+            <?php if ((int) $price['discount_active'] === 1): ?>
 
-                <p>
-                    <strong>Discount Period:</strong>
-                    <?= e($price['discount_start']) ?>
-                    to
-                    <?= e($price['discount_end']) ?>
+    <!-- Show the discount period only during an active sale. -->
+    <p>
+        <strong>Discount Period:</strong>
+        <?= e($price['discount_start']) ?>
+        to
+        <?= e($price['discount_end']) ?>
+    </p>
 
-                    (<?= (int) $price['discount_active'] === 1
-                        ? 'Active'
-                        : 'Not currently active' ?>)
-                </p>
+<?php endif; ?>
 
-            <?php endif; ?>
 
             <hr>
 
@@ -210,18 +209,27 @@ function e($value) {
 
     <?php endif; ?>
     
-<!-- Buy button: purchase functionality will be added later. -->
-<div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
+<
+<!-- Open the payment page for the selected game. -->
+<form action="payment.php" method="GET"
+      style="text-align: center; margin: 40px 0;">
 
-    <button type="button"
-            style="padding: 12px 40px; font-size: 18px;"
-            disabled>
+    <input
+        type="hidden"
+        name="game_id"
+        value="<?= (int) $gameId ?>"
+    >
+
+    <button type="submit"
+            style="padding: 12px 40px; font-size: 18px;">
         Buy
     </button>
+
+</form>
+
 
 </div>
 
 
 </body>
 </html>
-                        
