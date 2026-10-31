@@ -3,19 +3,20 @@
 
 session_start();
 
-// STEP 1: Only logged-in users can access this page.
+// Only logged-in administrators can access this page.
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
     exit;
 }
 
-// STEP 2: Only administrators are allowed.
 if (($_SESSION['role'] ?? '') !== 'admin') {
     http_response_code(403);
     exit('Access denied. Administrator only.');
 }
 
-// STEP 3: Handle admin logout on this page.
+header('Cache-Control: no-store, no-cache, must-revalidate');
+
+// Handle administrator logout.
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
     ($_POST['action'] ?? '') === 'logout'
@@ -56,42 +57,34 @@ if (
     exit;
 }
 
-// Generate security token for logout.
+// Generate logout security token.
 if (empty($_SESSION['admin_logout_csrf'])) {
     $_SESSION['admin_logout_csrf'] =
         bin2hex(random_bytes(32));
 }
 
-// STEP 4: Connect to MariaDB.
-// dashboard.php is inside Public/admin,
-// so we go up two folders to Config.
+// Connect to MariaDB.
 require_once __DIR__ . '/../../Config/database.php';
 
 $username = $_SESSION['username'] ?? 'Administrator';
 
-// STEP 5: Get live database statistics.
+// LIVE DATABASE STATISTICS
 
-// Total games in MariaDB.
 $totalGames = (int) $pdo->query(
     "SELECT COUNT(*) FROM game"
 )->fetchColumn();
 
-// Total buyer accounts.
 $totalBuyers = (int) $pdo->query(
     "SELECT COUNT(*)
      FROM `user`
      WHERE role = 'buyer'"
 )->fetchColumn();
 
-// Total recorded transactions.
 $totalTransactions = (int) $pdo->query(
     "SELECT COUNT(*)
      FROM `transaction`"
 )->fetchColumn();
 
-// Total games with active discounts.
-// DISTINCT avoids counting the same game twice
-// if multiple regional price records exist.
 $activeDiscounts = (int) $pdo->query(
     "SELECT COUNT(DISTINCT game_id)
      FROM prices
@@ -100,7 +93,6 @@ $activeDiscounts = (int) $pdo->query(
                          AND discount_end"
 )->fetchColumn();
 
-// Escape text before displaying it in HTML.
 function e($value) {
     return htmlspecialchars(
         (string) $value,
@@ -142,6 +134,7 @@ function e($value) {
             gap: 20px;
         }
 
+        /* Dynamic statistics */
         .statistics {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -164,6 +157,7 @@ function e($value) {
             margin-bottom: 0;
         }
 
+        /* Clickable management cards */
         .management {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -172,19 +166,37 @@ function e($value) {
         }
 
         .management-card {
+            display: block;
             border: 2px solid black;
             min-height: 160px;
             padding: 20px;
+            text-decoration: none;
+            color: black;
+            background: white;
+            box-sizing: border-box;
+            cursor: pointer;
         }
 
         .management-card h3 {
             margin-top: 0;
         }
 
-        .coming-soon {
-            color: #666;
+        /* Hover feedback */
+        .management-card:hover {
+            background: #f0f0f0;
+            border-color: #444;
+        }
+
+        /* Keyboard accessibility */
+        .management-card:focus-visible {
+            outline: 3px solid #2563eb;
+            outline-offset: 3px;
+        }
+
+        .card-description {
+            color: #555;
             font-size: 14px;
-            margin-top: 20px;
+            line-height: 1.5;
         }
 
         button {
@@ -193,6 +205,7 @@ function e($value) {
         }
 
         @media (max-width: 800px) {
+
             .statistics {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -200,18 +213,21 @@ function e($value) {
             .management {
                 grid-template-columns: repeat(2, 1fr);
             }
+
         }
 
         @media (max-width: 500px) {
+
             .statistics,
             .management {
                 grid-template-columns: 1fr;
             }
 
             .header {
-                align-items: flex-start;
                 flex-direction: column;
+                align-items: flex-start;
             }
+
         }
 
     </style>
@@ -220,7 +236,7 @@ function e($value) {
 
 <body>
 
-    <!-- ADMIN HEADER -->
+    <!-- ADMINISTRATOR HEADER -->
     <header class="header">
 
         <h1>SteamDB - Administrator</h1>
@@ -231,7 +247,7 @@ function e($value) {
                 Hi, <?= e($username) ?> (Admin)
             </strong>
 
-            <!-- Admin logout -->
+            <!-- Logout button -->
             <form action="dashboard.php" method="POST">
 
                 <input
@@ -246,7 +262,9 @@ function e($value) {
                     type="submit"
                     name="action"
                     value="logout">
+
                     Logout
+
                 </button>
 
             </form>
@@ -264,7 +282,7 @@ function e($value) {
     </p>
 
 
-    <!-- DATABASE STATISTICS -->
+    <!-- LIVE DATABASE STATISTICS -->
     <h2>Database Overview</h2>
 
     <section class="statistics">
@@ -294,114 +312,120 @@ function e($value) {
     <hr>
 
 
-    <!-- ADMINISTRATOR MANAGEMENT SECTIONS -->
+    <!-- CLICKABLE MANAGEMENT CARDS -->
     <h2>Management and Reports</h2>
 
     <section class="management">
 
-        <!-- Game Management -->
-        <div class="management-card">
+        <!-- 1. Manage Games -->
+        <a class="management-card"
+           href="games.php">
 
             <h3>Manage Games</h3>
 
             <p>
-                Add, edit, or deactivate games in SteamDB.
+                Add, and Delete games
+                in SteamDB.
             </p>
 
-            <p class="coming-soon">
-                Coming next
+            <p class="card-description">
+                Manage game information, metadata,
+                and cover images.
             </p>
 
-        </div>
+        </a>
 
 
-        <!-- Discount Management -->
-        <div class="management-card">
+        <!-- 2. Manage Discounts -->
+        <a class="management-card"
+           href="discounts.php">
 
             <h3>Manage Discounts</h3>
 
             <p>
-                Update discount percentages,
-                start dates and end dates.
+                Change discount percentages,
+                starting dates, and ending dates.
             </p>
 
-            <p class="coming-soon">
-                Coming soon
+            <p class="card-description">
+                Manage game pricing and promotions.
             </p>
 
-        </div>
+        </a>
 
 
-        <!-- Weekly Best -->
-        <div class="management-card">
+        <!-- 3. Weekly Best -->
+        <a class="management-card"
+           href="weekly_best.php">
 
             <h3>Weekly Best</h3>
 
             <p>
-                Add or remove featured games and
-                manage weekly selections.
+                Add or remove featured games
+                from the Weekly Best list.
             </p>
 
-            <p class="coming-soon">
-                Coming soon
+            <p class="card-description">
+                Manage current and previous selections.
             </p>
 
-        </div>
+        </a>
 
 
-        <!-- User Management -->
-        <div class="management-card">
+        <!-- 4. Manage Users -->
+        <a class="management-card"
+           href="users.php">
 
             <h3>Manage Users</h3>
 
             <p>
-                Create, update, or deactivate
+                Create, update, and deactivate
                 buyer accounts.
             </p>
 
-            <p class="coming-soon">
-                Coming soon
+            <p class="card-description">
+                Manage SteamDB buyer accounts.
             </p>
 
-        </div>
+        </a>
 
 
-        <!-- AI Reports -->
-        <div class="management-card">
+        <!-- 5. Generate AI Reports -->
+        <a class="management-card"
+           href="reports.php">
 
             <h3>Generate AI Reports</h3>
 
             <p>
-                Generate Administrator Activity
-                and Weekly Best reports with
-                AI summaries and CSV export.
+                Generate administrator activity
+                and Weekly Best reports.
             </p>
 
-            <p class="coming-soon">
-                Coming soon
+            <p class="card-description">
+                AI summaries with CSV export.
             </p>
 
-        </div>
+        </a>
 
 
-        <!-- Automated Reports -->
-        <div class="management-card">
+        <!-- 6. Automated Reports -->
+        <a class="management-card"
+           href="automated_reports.php">
 
             <h3>Automated Purchase Reports</h3>
 
             <p>
                 Access daily purchase history
-                CSV reports generated by n8n.
+                reports generated automatically.
             </p>
 
-            <p class="coming-soon">
-                Coming soon
+            <p class="card-description">
+                Scheduled CSV reports using n8n.
             </p>
 
-        </div>
+        </a>
 
     </section>
 
 </body>
-
 </html>

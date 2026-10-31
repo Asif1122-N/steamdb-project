@@ -121,15 +121,17 @@ $username = $_SESSION['username'];
         </button>
 
 
-        <!-- Weekly Best: to be implemented later -->
-        <button
-            class="card"
-            type="button"
-            onclick="alert('Weekly Best page coming soon.')">
+        <!-- Weekly Best-->
+       
+<button
+    class="card"
+    type="button"
+    onclick="window.location.href='weekly_best.php'">
 
-            Weekly Best
+    Weekly Best
 
-        </button>
+</button>
+
 
     </section>
 
