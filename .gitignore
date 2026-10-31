@@ -1,23 +1,17 @@
-
-# Local database configuration files
+# Database connections
 /Config/database.php
 /Config/mongodb.php
 
-# Environment files containing private settings
-.env
-.env.*
-!.env.example
-
-# Installed PHP dependencies
+# Dependencies
 /vendor/
 
-# Temporary files and logs
-*.log
-*.tmp
+# Sensitive configuration
+.env
+.env.*
 
-# Editor and operating system files
-.vscode/
-.DS_Store
-Thumbs.db
-# Exclude private administrator setup script
+# Temporary administrator setup scripts
 /scripts/create_admin.php
+/scripts/recreate_admin.php
+
+# Private generated reports
+/private_reports/

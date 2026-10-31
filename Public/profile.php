@@ -2,6 +2,56 @@
 <?php
 
 session_start();
+// Handle logout inside profile.php.
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['logout'])
+) {
+    $token = $_POST['csrf_token'] ?? '';
+
+    if (
+        !is_string($token) ||
+        !isset($_SESSION['logout_csrf']) ||
+        !hash_equals($_SESSION['logout_csrf'], $token)
+    ) {
+        http_response_code(403);
+        exit('Invalid logout request.');
+    }
+
+    // Clear all session data.
+    $_SESSION = [];
+
+    // Delete the session cookie.
+    if (ini_get('session.use_cookies')) {
+        $params = session_get_cookie_params();
+
+        setcookie(
+            session_name(),
+            '',
+            [
+                'expires' => time() - 3600,
+                'path' => $params['path'],
+                'domain' => $params['domain'],
+                'secure' => $params['secure'],
+                'httponly' => $params['httponly'],
+                'samesite' => $params['samesite'] ?? 'Lax'
+            ]
+        );
+    }
+
+    session_destroy();
+
+    header('Location: login.php');
+    exit;
+}
+
+// Keep your existing buyer authentication checks here.
+
+// Generate a logout token for the profile form.
+if (empty($_SESSION['logout_csrf'])) {
+    $_SESSION['logout_csrf'] = bin2hex(random_bytes(32));
+}
+
 
 // Only authenticated buyers can access their profile.
 if (!isset($_SESSION['user_id'])) {
@@ -102,11 +152,42 @@ function e($value) {
 
 <div style="max-width: 900px; margin: 30px auto;">
 
-    <h1>SteamDB</h1>
+    
+<h1>SteamDB</h1>
 
+<!-- Navigation: Back to Home on left, Logout on right -->
+<div style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+">
+
+    <!-- Back to Home -->
     <a href="home.php">Back to Home</a>
 
-    <hr>
+    <!-- Logout form -->
+    <form action="profile.php" method="POST">
+
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= e($_SESSION['logout_csrf']) ?>"
+        >
+
+        <button
+            type="submit"
+            name="logout"
+            value="1">
+            Logout
+        </button>
+
+    </form>
+
+</div>
+
+<hr>
+
 
     <h2>My Profile</h2>
     
